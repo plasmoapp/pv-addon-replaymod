@@ -7,7 +7,6 @@
     "FullReplaySenderMixin",
     "InitMixin",
     "ReplayHandlerMixin",
-    "VideoRendererMixin",
     "accessor.ConnectionEventHandlerAccessor",
     "accessor.FullReplaySenderAccessor",
     "accessor.GuiPathingAccessor",

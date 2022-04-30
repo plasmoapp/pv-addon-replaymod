@@ -1,8 +1,8 @@
 plugins {
-    id 'fabric-loom' version '0.11-SNAPSHOT'
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id 'com.modrinth.minotaur' version '2.+'
+    id "fabric-loom" version "0.11-SNAPSHOT"
+    id "com.github.johnrengelman.shadow" version "7.1.0"
+    id "com.matthewprenger.cursegradle" version "1.4.0"
+    id "com.modrinth.minotaur" version "2.+"
 }
 
 sourceCompatibility = JavaLanguageVersion.of(java_version as int)
@@ -16,7 +16,7 @@ repositories {
     mavenCentral()
     maven {
         name = "henkelmax.public"
-        url = 'https://maven.maxhenkel.de/repository/public'
+        url = "https://maven.maxhenkel.de/repository/public"
     }
     maven {
         name = "Modrinth"
@@ -29,7 +29,7 @@ repositories {
 }
 
 runClient.doFirst {
-    args = ['--username', System.getProperty("user.name")]
+    args = ["--username", System.getProperty("user.name")]
 }
 
 dependencies {
@@ -43,21 +43,21 @@ dependencies {
     ]
 
     apiModules.forEach {
-        include(modImplementation(fabricApi.module(it, fabric_version)))
+        // no reason to include Fabric API modules because replaymod (and plasmo voice) already has it
+        // this will fix 1.18.1 support
+        modImplementation(fabricApi.module(it, fabric_version))
     }
 
     modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
-
-    implementation "de.maxhenkel.voicechat:voicechat-api:${voicechat_api_version}"
+    implementation "com.google.code.findbugs:jsr305:3.0.2"
 
     implementation "de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT"
     shadow "de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT"
 
-//    modRuntimeOnly "maven.modrinth:simple-voice-chat:fabric-${voicechat_dependency}"
+//    modImplementation "maven.modrinth:plasmo-voice:fabric-${pv_dependency}"
 
-    modImplementation fileTree(dir: 'libs', include: '*.jar')
+    modImplementation fileTree(dir: "libs", include: "*.jar")
 }
 
 processResources {
@@ -68,8 +68,7 @@ processResources {
                 "java_version": java_version,
                 "minecraft_dependency": minecraft_dependency,
                 "loader_version": loader_version,
-                "voicechat_dependency": voicechat_dependency,
-                "voicechat_breaks": voicechat_breaks,
+                "pv_dependency": pv_version,
                 "replaymod_dependency": replaymod_dependency
     }
 }
@@ -90,8 +89,8 @@ jar {
 
 shadowJar {
     configurations = [project.configurations.shadow]
-    classifier 'shadow-dev'
-    relocate 'de.maxhenkel.sonic', "de.maxhenkel.${archives_base_name}.sonic"
+        classifier "shadow-dev"
+    relocate "de.maxhenkel.sonic", "de.maxhenkel.${archives_base_name}.sonic"
 }
 
 prepareRemapJar {
@@ -103,19 +102,18 @@ remapJar {
 }
 
 curseforge {
-    apiKey = file("${rootDir}/curseforge_api_key.txt").exists() ? file("${rootDir}/curseforge_api_key.txt").text : ''
+    apiKey = file("${rootDir}/curseforge_api_key.txt").exists() ? file("${rootDir}/curseforge_api_key.txt").text : ""
     project {
         id = curse_id
-        changelogType = 'markdown'
+        changelogType = "markdown"
         changelog = file("changelog.md")
         releaseType = release_type
-        addGameVersion curseforge_minecraft_version
-        addGameVersion 'Fabric'
-        addGameVersion "Java ${java_version}"
+        addGameVersion "Fabric"
+        gameVersionStrings.addAll(curse_supported_versions.split(","))
         mainArtifact(file("${buildDir}/libs/${archivesBaseName}-${version}.jar")) {
-            displayName = "[FABRIC][${minecraft_version}] ${mod_name} ${mod_version}"
+            displayName = "[Fabric ${minecraft_display_version}] ${mod_name} ${mod_version}"
             relations {
-                requiredDependency 'simple-voice-chat'
+                requiredDependency "plasmo-voice"
             }
         }
         afterEvaluate {
@@ -130,21 +128,21 @@ curseforge {
 import com.modrinth.minotaur.dependencies.ModDependency
 
 tasks.modrinth.configure({
-    group = 'upload'
+    group = "upload"
 })
 
 modrinth {
-    token = file("${rootDir}/modrinth_token.txt").exists() ? file("${rootDir}/modrinth_token.txt").text : ''
+    token = file("${rootDir}/modrinth_token.txt").exists() ? file("${rootDir}/modrinth_token.txt").text : ""
     projectId = modrinth_id
-    versionNumber = "fabric-${mod_version}"
-    versionName = "[FABRIC][${minecraft_version}] ${mod_name} ${mod_version}"
+    versionNumber = "fabric-${minecraft_display_version}-${mod_version}"
+    versionName = "[Fabric ${minecraft_display_version}] ${mod_name} ${mod_version}"
     uploadFile = remapJar
     versionType = release_type.toUpperCase()
     changelog = file("changelog.md").text
-    gameVersions = [minecraft_version]
-    loaders = ['fabric']
+    gameVersions.addAll(curse_supported_versions.split(","))
+    loaders = ["fabric"]
     dependencies = [
-            new ModDependency("9eGKb6K1", "required") // Simple Voice Chat
+            new ModDependency("1bZhdhsH", "required") // Plasmo Voice
     ]
 }
 tasks.modrinth.dependsOn(build)

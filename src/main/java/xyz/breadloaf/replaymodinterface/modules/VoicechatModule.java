@@ -6,7 +6,6 @@ import com.replaymod.lib.de.johni0702.minecraft.gui.utils.EventRegistrations;
 import com.replaymod.render.events.ReplayRenderCallback;
 import com.replaymod.replay.events.ReplayClosingCallback;
 import com.replaymod.replay.events.ReplayOpenedCallback;
-import de.maxhenkel.replayvoicechat.rendering.VoicechatVoiceRenderer;
 import xyz.breadloaf.replaymodinterface.ReplayInterface;
 
 public class VoicechatModule extends EventRegistrations implements Module {
@@ -16,7 +15,7 @@ public class VoicechatModule extends EventRegistrations implements Module {
 
     @Override
     public void initClient() {
-        on(ReplayOpenedCallback.EVENT,replayHandler -> {
+        on(ReplayOpenedCallback.EVENT, replayHandler -> {
             ReplayInterface.INSTANCE.isInReplayEditor = true;
         });
         on(ReplayClosingCallback.EVENT, replayHandler -> {
@@ -28,7 +27,6 @@ public class VoicechatModule extends EventRegistrations implements Module {
         });
         on(ReplayRenderCallback.Post.EVENT, videoRenderer -> {
             ReplayInterface.INSTANCE.isRendering = false;
-            VoicechatVoiceRenderer.onStopRendering();
             ReplayInterface.INSTANCE.videoRenderer = null;
         });
         register();

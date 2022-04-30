@@ -1,41 +1,36 @@
 {
-  "schemaVersion": 1,
-  "id": "replayvoicechat",
-  "version": "${version}",
-  "name": "Replay Voice Chat",
-  "description": "A compatibility mod between Simple Voice Chat and ReplayMod",
-  "authors": [
-    "Max Henkel",
-    "BreadLoaf"
-  ],
-  "contact": {
-    "homepage": "https://modrepo.de/",
-    "sources": "https://github.com/henkelmax/svc-replay-mod"
-  },
-  "license": "MIT",
-  "icon": "assets/replayvoicechat/icon.png",
-  "environment": "client",
-  "entrypoints": {
-    "client": [
-      "xyz.breadloaf.replaymodinterface.ReplayInterface",
-      "de.maxhenkel.replayvoicechat.ReplayVoicechat"
+    "schemaVersion": 1,
+    "id": "replayvoicechat",
+    "version": "${version}",
+    "name": "Replay Voice Chat",
+    "description": "A compatibility mod between Plasmo Voice and ReplayMod",
+    "authors": [
+        "Max Henkel",
+        "BreadLoaf",
+        "Apehum"
     ],
-    "voicechat": [
-      "de.maxhenkel.replayvoicechat.ReplayVoicechatPlugin"
-    ]
-  },
-  "mixins": [
-    "replaymodinterface.mixins.json",
-    "replayvoicechat.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=${loader_version}",
-    "minecraft": "${minecraft_dependency}",
-    "java": ">=${java_version}",
-    "voicechat": ">=${voicechat_dependency}",
-    "replaymod": "=${replaymod_dependency}"
-  },
-  "breaks": {
-    "voicechat": ">=${voicechat_breaks}"
-  }
+    "contact": {
+        "homepage": "https://github.com/plasmoapp/replay-voice-chat",
+        "sources": "https://github.com/plasmoapp/replay-voice-chat"
+    },
+    "license": "MIT",
+    "icon": "assets/replayvoicechat/icon.png",
+    "environment": "client",
+    "entrypoints": {
+        "client": [
+            "xyz.breadloaf.replaymodinterface.ReplayInterface",
+            "su.plo.replayvoice.ReplayVoicechat"
+        ]
+    },
+    "mixins": [
+        "replaymodinterface.mixins.json",
+        "replaypvoice.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=${loader_version}",
+        "minecraft": "${minecraft_dependency}",
+        "java": ">=${java_version}",
+        "replaymod": ">=${replaymod_dependency}",
+        "plasmo_voice": ">=${pv_dependency}"
+    }
 }

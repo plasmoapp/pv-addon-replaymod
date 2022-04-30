@@ -11,7 +11,6 @@ import com.replaymod.replaystudio.pathing.path.Keyframe;
 import com.replaymod.replaystudio.pathing.path.Path;
 import com.replaymod.replaystudio.pathing.path.Timeline;
 import com.replaymod.simplepathing.ReplayModSimplePathing;
-import de.maxhenkel.voicechat.api.Player;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
