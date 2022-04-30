@@ -83,13 +83,17 @@ public class ReplayInterface implements ClientModInitializer {
 
         Timeline tl = ReplayModSimplePathing.instance.getCurrentTimeline().getTimeline();
 
-        if (!(tl instanceof TimelineImpl timeline)) {
+        if (!(tl instanceof TimelineImpl)) {
             return 1D;
         }
 
-        if (!(ReplayModSimplePathing.instance.getGuiPathing() instanceof GuiPathingAccessor guiPathingAccessor)) {
+        TimelineImpl timeline = (TimelineImpl) tl;
+
+        if (!(ReplayModSimplePathing.instance.getGuiPathing() instanceof GuiPathingAccessor)) {
             return 1D;
         }
+
+        GuiPathingAccessor guiPathingAccessor = (GuiPathingAccessor) ReplayModSimplePathing.instance.getGuiPathing();
 
         long currentRealtime;
         if (INSTANCE.isRendering) {
@@ -107,7 +111,7 @@ public class ReplayInterface implements ClientModInitializer {
 
             for (Keyframe keyframe : keyframes) {
                 Optional<Integer> value = keyframe.getValue(TimestampProperty.PROPERTY);
-                if (value.isEmpty()) {
+                if (!value.isPresent()) {
                     continue;
                 }
 

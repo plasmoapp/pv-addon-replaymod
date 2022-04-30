@@ -7,8 +7,8 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import su.plo.replayvoice.network.ClientNetworkHandler;
 import su.plo.voice.common.packets.udp.VoiceServerPacket;
 import xyz.breadloaf.replaymodinterface.ReplayInterface;
@@ -19,7 +19,7 @@ public class ReplayVoicechat implements ClientModInitializer {
     private final static ResourceLocation VOICE_PACKET_ID = new ResourceLocation("plasmo:voice/voice_packet");
 
     public static final String MOD_ID = "replayvoicechat";
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     @Override
     public void onInitializeClient() {

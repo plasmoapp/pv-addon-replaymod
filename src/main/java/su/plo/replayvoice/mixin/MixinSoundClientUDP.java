@@ -24,7 +24,8 @@ public class MixinSoundClientUDP {
         if (!ReplayInterface.INSTANCE.isReplayModActive() || minecraft.player == null) return;
         UUID ownUUID = minecraft.player.getUUID();
 
-        if (packet instanceof VoiceClientPacket voicePacket) {
+        if (packet instanceof VoiceClientPacket) {
+            VoiceClientPacket voicePacket = (VoiceClientPacket) packet;
             ReplayVoicechat.record(
                     new VoiceServerPacket(
                             voicePacket.getData(),
@@ -33,7 +34,8 @@ public class MixinSoundClientUDP {
                             voicePacket.getDistance()
                     )
             );
-        } else if (packet instanceof VoiceEndClientPacket voicePacket) {
+        } else if (packet instanceof VoiceEndClientPacket) {
+            VoiceEndClientPacket voicePacket = (VoiceEndClientPacket) packet;
             ReplayVoicechat.record(
                     new VoiceServerPacket(
                             new byte[0],

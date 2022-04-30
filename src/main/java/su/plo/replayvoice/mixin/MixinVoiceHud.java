@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.player.RemotePlayer;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,15 +28,15 @@ public class MixinVoiceHud {
         if (!ReplayInterface.INSTANCE.isInReplayEditor) return;
 
         Entity camera = Minecraft.getInstance().cameraEntity;
-        if (camera instanceof RemotePlayer player) {
+        if (camera instanceof RemotePlayer) {
+            RemotePlayer player = (RemotePlayer) camera;
             final Gui inGameHud = client.gui;
             final PoseStack matrixStack = new PoseStack();
 
             Boolean isPriorityTalking = SocketClientUDPQueue.talking.get(player.getUUID());
             if (isPriorityTalking != null) {
-                RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-                RenderSystem.setShaderTexture(0, VoiceClient.ICONS);
+                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                this.client.getTextureManager().bind(VoiceClient.ICONS);
 
                 if (isPriorityTalking) {
                     inGameHud.blit(
