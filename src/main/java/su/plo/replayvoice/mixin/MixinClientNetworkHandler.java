@@ -35,6 +35,7 @@ public abstract class MixinClientNetworkHandler {
 
         VoiceClient.getServerConfig().update(packet);
         VoiceClient.socketUDP = new EmptySocketConnection();
+        VoiceClient.socketUDP.start();
 
         ci.cancel();
     }

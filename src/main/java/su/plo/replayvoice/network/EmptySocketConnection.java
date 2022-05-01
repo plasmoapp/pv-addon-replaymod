@@ -1,12 +1,14 @@
 package su.plo.replayvoice.network;
 
 import su.plo.voice.client.VoiceClient;
+import su.plo.voice.client.socket.SocketClientUDPQueue;
 import su.plo.voice.client.socket.SocketConnection;
+import su.plo.voice.client.sound.AbstractSoundQueue;
 import su.plo.voice.common.packets.Packet;
 
 import java.io.IOException;
 
-public class EmptySocketConnection implements SocketConnection {
+public class EmptySocketConnection extends Thread implements SocketConnection {
     @Override
     public void close() {
     }
@@ -16,7 +18,21 @@ public class EmptySocketConnection implements SocketConnection {
     }
 
     @Override
-    public void start() {
+    public void run() {
+        while (true) {
+            SocketClientUDPQueue.audioChannels
+                    .values()
+                    .stream()
+                    .filter(AbstractSoundQueue::canKill)
+                    .forEach(AbstractSoundQueue::closeAndKill);
+            SocketClientUDPQueue.audioChannels.entrySet().removeIf(entry -> entry.getValue().isClosed());
+
+            try {
+                Thread.sleep(1000L);
+            } catch (InterruptedException ignored) {
+                break;
+            }
+        }
     }
 
     @Override
@@ -37,9 +53,5 @@ public class EmptySocketConnection implements SocketConnection {
     @Override
     public boolean isConnected() {
         return VoiceClient.getServerConfig() != null;
-    }
-
-    @Override
-    public void run() {
     }
 }

@@ -11,11 +11,14 @@ import su.plo.voice.client.socket.SocketClientUDPQueue;
 import su.plo.voice.client.sound.AbstractSoundQueue;
 import su.plo.voice.client.sound.openal.OpenALPlayerQueue;
 import su.plo.voice.common.packets.udp.VoiceServerPacket;
+import xyz.breadloaf.replaymodinterface.ReplayInterface;
 
 import java.io.IOException;
 
 public class ClientNetworkHandler {
     public void handle(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+        if (ReplayInterface.INSTANCE.skipping) return;
+
         byte[] data = new byte[buf.readableBytes()];
         buf.readBytes(data);
 

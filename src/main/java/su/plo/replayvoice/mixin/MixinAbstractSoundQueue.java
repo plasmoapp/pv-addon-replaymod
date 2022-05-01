@@ -5,16 +5,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import su.plo.replayvoice.ReplayVoicechat;
-import su.plo.voice.client.socket.SocketClientUDPQueue;
+import su.plo.voice.client.sound.AbstractSoundQueue;
 import su.plo.voice.common.packets.udp.VoiceServerPacket;
 import xyz.breadloaf.replaymodinterface.ReplayInterface;
 
-import java.util.UUID;
-
-@Mixin(value = SocketClientUDPQueue.class, remap = false)
-public abstract class MixinSocketClientUDPQueue {
-    @Inject(method = "queuePacket", at = @At(value = "HEAD"))
-    public void queuePacket(VoiceServerPacket packet, UUID uuid, CallbackInfo ci) {
+@Mixin(value = AbstractSoundQueue.class, remap = false)
+public class MixinAbstractSoundQueue {
+    @Inject(method = "addQueue", at = @At("HEAD"))
+    public void addQueue(VoiceServerPacket packet, CallbackInfo ci) {
         if (!ReplayInterface.INSTANCE.isReplayModActive()) return;
         ReplayVoicechat.record(packet);
     }
