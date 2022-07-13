@@ -37,18 +37,7 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${loader_version}"
 
-    Set<String> apiModules = [
-            "fabric-api-base",
-            "fabric-networking-api-v1"
-    ]
-
-    apiModules.forEach {
-        // no reason to include Fabric API modules because replaymod (and plasmo voice) already has it
-        // this will fix 1.18.1 support
-        modImplementation(fabricApi.module(it, fabric_version))
-    }
-
-    modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
     implementation "com.google.code.findbugs:jsr305:3.0.2"
 
