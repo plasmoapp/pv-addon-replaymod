@@ -56,7 +56,7 @@ dependencies {
 
 //    modImplementation "maven.modrinth:plasmo-voice:fabric-${pv_dependency}"
 
-    modImplementation fileTree(dir: "libs", include: "*.jar")
+    modImplementation "maven.modrinth:replaymod:1.16.4-2.6.9"
 }
 
 processResources {
