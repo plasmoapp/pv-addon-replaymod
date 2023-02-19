@@ -25,6 +25,10 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+    maven {
+        name = "plasmo-repo"
+        url = "https://repo.plo.su"
+    }
     mavenLocal()
 }
 
