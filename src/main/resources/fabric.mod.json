@@ -19,18 +19,17 @@
     "entrypoints": {
         "client": [
             "xyz.breadloaf.replaymodinterface.ReplayInterface",
-            "su.plo.replayvoice.ReplayVoicechat"
+            "su.plo.replayvoice.ReplayVoiceAddon"
         ]
     },
     "mixins": [
-        "replaymodinterface.mixins.json",
-        "replaypvoice.mixins.json"
+        "replaymodinterface.mixins.json"
     ],
     "depends": {
         "fabricloader": ">=${loader_version}",
         "minecraft": "${minecraft_dependency}",
         "java": ">=${java_version}",
         "replaymod": ">=${replaymod_dependency}",
-        "plasmo_voice": ">=${pv_dependency}"
+        "plasmovoice": ">=${pv_dependency}"
     }
 }
