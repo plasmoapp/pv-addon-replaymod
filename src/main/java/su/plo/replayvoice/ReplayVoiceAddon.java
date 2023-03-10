@@ -7,12 +7,10 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -181,12 +179,11 @@ public class ReplayVoiceAddon implements ClientModInitializer {
         if (!ReplayInterface.INSTANCE.isInReplayEditor) return;
 
         event.getSource().setCloseTimeoutMs(0L);
-        event.getSource().getSourceGroup().ifPresent((sourceGroup) -> {
-            sourceGroup.getSources().forEach((source) -> {
-                if (source instanceof AlSource) {
-                    ((AlSource) source).setCloseTimeoutMs(0L);
-                }
-            });
+
+        event.getSource().getSourceGroup().getSources().forEach((source) -> {
+            if (source instanceof AlSource) {
+                ((AlSource) source).setCloseTimeoutMs(0L);
+            }
         });
     }
 

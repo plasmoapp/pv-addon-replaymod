@@ -127,7 +127,7 @@ public class ClientNetworkHandler {
 
             data.ifPresent((bytes) -> source.process(new SourceAudioPacket(
                     packet.getSequenceNumber(),
-                    source.getInfo().getState(),
+                    source.getSourceInfo().getState(),
                     bytes,
                     packet.getSourceId(),
                     packet.getDistance()
@@ -147,7 +147,7 @@ public class ClientNetworkHandler {
 
         voiceClient.getSourceManager().getSourceById(packet.getSourceId())
                 .ifPresent(source -> {
-                    if (source.getInfo().getState() != packet.getSourceState()) return;
+                    if (source.getSourceInfo().getState() != packet.getSourceState()) return;
                     source.process(packet);
                 });
     }
