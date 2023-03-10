@@ -14,6 +14,7 @@ group = maven_group
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven {
         name = "henkelmax.public"
         url = "https://maven.maxhenkel.de/repository/public"
@@ -29,7 +30,6 @@ repositories {
         name = "plasmo-repo"
         url = "https://repo.plo.su"
     }
-    mavenLocal()
 }
 
 runClient.doFirst {
@@ -56,7 +56,7 @@ dependencies {
 
 //    modImplementation "maven.modrinth:plasmo-voice:fabric-${pv_dependency}"
 
-    modImplementation "maven.modrinth:replaymod:1.16.4-2.6.9"
+    modImplementation "maven.modrinth:replaymod:${minecraft_version}-2.6.9"
 }
 
 processResources {
