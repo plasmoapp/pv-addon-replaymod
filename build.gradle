@@ -49,9 +49,7 @@ dependencies {
     shadow "de.maxhenkel.sonic:sonic:1.0.0-SNAPSHOT"
 
     implementation "su.plo.voice.api:client:${pv_version}"
-    annotationProcessor "su.plo.voice.api:client:${pv_version}"
 
-    compileOnly "org.projectlombok:lombok:1.18.24"
     annotationProcessor "org.projectlombok:lombok:1.18.24"
 
 //    modImplementation "maven.modrinth:plasmo-voice:fabric-${pv_dependency}"

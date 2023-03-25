@@ -2,6 +2,7 @@ package su.plo.replayvoice;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import com.google.inject.Inject;
 import com.replaymod.recording.ReplayModRecording;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
@@ -16,12 +17,13 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import su.plo.replayvoice.network.ClientNetworkHandler;
 import su.plo.replayvoice.network.DummyUdpClient;
-import su.plo.voice.api.addon.AddonScope;
+import su.plo.voice.api.addon.AddonInitializer;
+import su.plo.voice.api.addon.AddonLoaderScope;
+import su.plo.voice.api.addon.ClientAddonsLoader;
 import su.plo.voice.api.addon.annotation.Addon;
 import su.plo.voice.api.client.PlasmoVoiceClient;
 import su.plo.voice.api.client.audio.device.source.AlSource;
 import su.plo.voice.api.client.audio.source.ClientAudioSource;
-import su.plo.voice.api.client.event.VoiceClientInitializedEvent;
 import su.plo.voice.api.client.event.audio.capture.AudioCaptureInitializeEvent;
 import su.plo.voice.api.client.event.audio.source.AudioSourceInitializedEvent;
 import su.plo.voice.api.client.event.connection.ConnectionKeyPairGenerateEvent;
@@ -41,8 +43,8 @@ import xyz.breadloaf.replaymodinterface.ReplayInterface;
 import java.io.IOException;
 import java.security.KeyPair;
 
-@Addon(id = "replayvoice", scope = AddonScope.CLIENT, version = "1.0.0", authors = "Apehum")
-public class ReplayVoiceAddon implements ClientModInitializer {
+@Addon(id = "pv-addon-replaymod", scope = AddonLoaderScope.CLIENT, version = "2.0.0", authors = "Apehum")
+public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer {
 
     public static final Logger LOGGER = LogManager.getLogger();
     public static final ResourceLocation SELF_AUDIO_PACKET = new ResourceLocation("plasmo:voice/v2/self_audio");
@@ -52,12 +54,11 @@ public class ReplayVoiceAddon implements ClientModInitializer {
 
     private final Minecraft minecraft = Minecraft.getInstance();
 
+    @Inject
     private PlasmoVoiceClient voiceClient;
 
-    @EventSubscribe
-    public void onClientInitialized(@NotNull VoiceClientInitializedEvent event) {
-        this.voiceClient = event.getClient();
-
+    @Override
+    public void onAddonInitialize() {
         ClientNetworkHandler network = new ClientNetworkHandler(voiceClient);
 
         ClientPlayNetworking.registerGlobalReceiver(SOURCE_AUDIO_PACKET, network::handleSourceAudioPacket);
@@ -68,6 +69,7 @@ public class ReplayVoiceAddon implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        ClientAddonsLoader.INSTANCE.load(this);
     }
 
     @EventSubscribe

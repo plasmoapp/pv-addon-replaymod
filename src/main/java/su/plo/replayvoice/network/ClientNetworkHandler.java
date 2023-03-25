@@ -112,7 +112,7 @@ public class ClientNetworkHandler {
 
         voiceClient.getSourceManager().getSourceById(packet.getSourceId(), false).ifPresent((source) -> {
             if (source.isActivated() && !shouldPlay) {
-                source.close();
+                source.closeAsync();
             } else if (!shouldPlay) return;
 
             Optional<byte[]> data = packet.getData();
