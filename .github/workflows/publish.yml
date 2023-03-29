@@ -34,7 +34,8 @@ jobs:
         modrinth-id: 4iTfB0AP
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
-        files-secondary: build/libs/*-@(disabled).jar
+        files-primary: build/libs/!(*-@(dev|sources|javadoc)).jar
+        files-secondary: ""
 
     - name: Publish to GitHub
       uses: Apehum/mc-publish@v1.1
@@ -42,4 +43,5 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         github-generate-changelog: false
 
-        files-secondary: build/libs/*-@(disabled).jar
+        files-primary: build/libs/!(*-@(dev|sources|javadoc)).jar
+        files-secondary: ""
