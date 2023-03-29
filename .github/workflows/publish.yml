@@ -3,7 +3,7 @@ name: Publish
 on:
   push:
     branches:
-      - main
+      - release
 
 jobs:
   build:
@@ -28,17 +28,19 @@ jobs:
       with:
         arguments: build
 
-    - name: Publish to Modrinth/CurseForge
+    - name: Publish to Modrinth
       uses: Apehum/mc-publish@v1.1
       with:
-        name: 'PV Addon ReplayMod'
+        modrinth-id: 4iTfB0AP
+        modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
-        # modrinth-unfeature-mode: 'none'
-        # modrinth-id: 1bZhdhsH
-        # modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-
-        # curseforge-id: 394468
-        # curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+        loaders: |
+          fabric
+          forge
+        game-versions: |
+          1.19.2
+          1.19.3
+          1.19.4
         
     - name: Publish to GitHub
       uses: Apehum/mc-publish@v1.1
