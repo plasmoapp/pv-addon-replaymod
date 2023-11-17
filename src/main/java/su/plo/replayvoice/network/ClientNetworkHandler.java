@@ -8,12 +8,9 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.logging.log4j.LogManager;
 import su.plo.replayvoice.CameraUtil;
 import su.plo.voice.api.client.PlasmoVoiceClient;
-import su.plo.voice.api.client.audio.source.ClientSelfSourceInfo;
-import su.plo.voice.api.util.CircularBuffer;
 import su.plo.voice.proto.data.audio.source.DirectSourceInfo;
 import su.plo.voice.proto.packets.Packet;
 import su.plo.voice.proto.packets.udp.clientbound.SelfAudioInfoPacket;
@@ -21,11 +18,12 @@ import su.plo.voice.proto.packets.udp.clientbound.SourceAudioPacket;
 import su.plo.voice.proto.packets.udp.serverbound.PlayerAudioPacket;
 import xyz.breadloaf.replaymodinterface.ReplayInterface;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
-import java.security.spec.*;
+import java.security.spec.EncodedKeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,7 +36,7 @@ public class ClientNetworkHandler {
     private final PlasmoVoiceClient voiceClient;
 
     private final Map<Long, Integer> packetIndex = Maps.newHashMap();
-    private final List<PlayerAudioPacket> packets = Lists.newArrayList();
+    private final List<PlayerAudioPacket> packets = new ArrayList<>();
 
     private int currentPacketIndex = 0;
 
@@ -106,7 +104,7 @@ public class ClientNetworkHandler {
 
             if (voiceClient.getSourceManager().getSourceById(packet.getSourceId(), false).isPresent()) return true;
 
-            voiceClient.getSourceManager().update(selfSourceInfo.getSelfSourceInfo().getSourceInfo());
+            voiceClient.getSourceManager().createOrUpdateSource(selfSourceInfo.getSelfSourceInfo().getSourceInfo());
             return true;
         }).orElse(true);
 

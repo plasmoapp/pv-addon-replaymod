@@ -68,6 +68,6 @@ public class DummyUdpClient implements UdpClient {
         LOGGER.info("Connected to fake UDP client");
         this.connected = true;
 
-        voiceClient.getEventBus().call(new UdpClientConnectedEvent(this));
+        voiceClient.getEventBus().fire(new UdpClientConnectedEvent(this));
     }
 }

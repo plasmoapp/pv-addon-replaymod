@@ -2,7 +2,6 @@ package su.plo.replayvoice;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.google.inject.Inject;
 import com.replaymod.recording.ReplayModRecording;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
@@ -20,6 +19,7 @@ import su.plo.replayvoice.network.DummyUdpClient;
 import su.plo.voice.api.addon.AddonInitializer;
 import su.plo.voice.api.addon.AddonLoaderScope;
 import su.plo.voice.api.addon.ClientAddonsLoader;
+import su.plo.voice.api.addon.InjectPlasmoVoice;
 import su.plo.voice.api.addon.annotation.Addon;
 import su.plo.voice.api.client.PlasmoVoiceClient;
 import su.plo.voice.api.client.audio.device.source.AlSource;
@@ -43,7 +43,7 @@ import xyz.breadloaf.replaymodinterface.ReplayInterface;
 import java.io.IOException;
 import java.security.KeyPair;
 
-@Addon(id = "pv-addon-replaymod", scope = AddonLoaderScope.CLIENT, version = "2.0.0", authors = "Apehum")
+@Addon(id = "pv-addon-replaymod", scope = AddonLoaderScope.CLIENT, version = "2.1.0", authors = "Apehum")
 public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer {
 
     public static final Logger LOGGER = LogManager.getLogger();
@@ -54,7 +54,7 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
 
     private final Minecraft minecraft = Minecraft.getInstance();
 
-    @Inject
+    @InjectPlasmoVoice
     private PlasmoVoiceClient voiceClient;
 
     @Override
@@ -88,7 +88,7 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
         if (!CameraUtil.isReplayRecorder()) return;
         RemotePlayer player = (RemotePlayer) Minecraft.getInstance().cameraEntity;
 
-        boolean isActivated = voiceClient.getSourceManager().getSelfSourceInfos()
+        boolean isActivated = voiceClient.getSourceManager().getAllSelfSourceInfos()
                 .stream()
                 .filter((sourceInfo) ->
                         sourceInfo.getSelfSourceInfo().getPlayerId().equals(player.getUUID()) &&
