@@ -1,5 +1,5 @@
 plugins {
-    id "fabric-loom" version "1.0-SNAPSHOT"
+    id "fabric-loom" version "1.4-SNAPSHOT"
     id "com.github.johnrengelman.shadow" version "7.1.0"
     id "com.matthewprenger.cursegradle" version "1.4.0"
     id "com.modrinth.minotaur" version "2.+"
@@ -52,9 +52,8 @@ dependencies {
 
     annotationProcessor "org.projectlombok:lombok:1.18.24"
 
-//    modImplementation "maven.modrinth:plasmo-voice:fabric-${pv_dependency}"
-
-    modImplementation "maven.modrinth:replaymod:${minecraft_version}-2.6.9"
+    modImplementation "maven.modrinth:plasmo-voice:fabric-${minecraft_version}-${pv_dependency}"
+    modImplementation "maven.modrinth:replaymod:${minecraft_version}-2.6.14"
 }
 
 processResources {
@@ -86,15 +85,12 @@ jar {
 
 shadowJar {
     configurations = [project.configurations.shadow]
-        classifier "shadow-dev"
-    relocate "de.maxhenkel.sonic", "de.maxhenkel.${archives_base_name}.sonic"
-}
-
-prepareRemapJar {
-    dependsOn shadowJar
+    archiveClassifier = "shadow-dev"
+    relocate "de.maxhenkel.sonic", "${group}.de.maxhenkel.sonic"
 }
 
 remapJar {
+    dependsOn shadowJar
     input = shadowJar.archiveFile.get()
 }
 

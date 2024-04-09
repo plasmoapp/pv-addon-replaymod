@@ -7,10 +7,10 @@ import com.replaymod.recording.ReplayModRecording;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -133,7 +133,7 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
         }
 
         ReplayModRecording.instance.getConnectionEventHandler().getPacketListener().save(
-                new ClientboundCustomPayloadPacket(
+                ServerPlayNetworking.createS2CPacket(
                         SELF_AUDIO_PACKET,
                         new FriendlyByteBuf(Unpooled.wrappedBuffer(out.toByteArray()))
                 )
@@ -156,7 +156,7 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
         buf.writeBytes(privateKey);
 
         ReplayModRecording.instance.getConnectionEventHandler().getPacketListener().save(
-                new ClientboundCustomPayloadPacket(KEYPAIR_PACKET, buf)
+                ServerPlayNetworking.createS2CPacket(KEYPAIR_PACKET, buf)
         );
     }
 
