@@ -6,10 +6,10 @@ import com.replaymod.recording.ReplayModRecording;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,28 +22,30 @@ import su.plo.voice.api.addon.ClientAddonsLoader;
 import su.plo.voice.api.addon.InjectPlasmoVoice;
 import su.plo.voice.api.addon.annotation.Addon;
 import su.plo.voice.api.client.PlasmoVoiceClient;
-import su.plo.voice.api.client.audio.device.source.AlSource;
 import su.plo.voice.api.client.audio.source.ClientAudioSource;
 import su.plo.voice.api.client.event.audio.capture.AudioCaptureInitializeEvent;
-import su.plo.voice.api.client.event.audio.source.AudioSourceInitializedEvent;
+import su.plo.voice.api.client.event.audio.source.AudioSourceResetEvent;
 import su.plo.voice.api.client.event.connection.ConnectionKeyPairGenerateEvent;
 import su.plo.voice.api.client.event.connection.UdpClientPacketReceivedEvent;
 import su.plo.voice.api.client.event.connection.UdpClientPacketSendEvent;
 import su.plo.voice.api.client.event.render.HudActivationRenderEvent;
 import su.plo.voice.api.client.event.render.VoiceDistanceRenderEvent;
+import su.plo.voice.api.client.event.socket.UdpClientClosedEvent;
 import su.plo.voice.api.client.event.socket.UdpClientConnectEvent;
+import su.plo.voice.api.client.time.SystemTimeSupplier;
 import su.plo.voice.api.event.EventCancellable;
 import su.plo.voice.api.event.EventSubscribe;
 import su.plo.voice.proto.packets.Packet;
 import su.plo.voice.proto.packets.udp.clientbound.SelfAudioInfoPacket;
 import su.plo.voice.proto.packets.udp.clientbound.SourceAudioPacket;
 import su.plo.voice.proto.packets.udp.serverbound.PlayerAudioPacket;
+import su.plo.voice.replayvoice.BuildConstants;
 import xyz.breadloaf.replaymodinterface.ReplayInterface;
 
 import java.io.IOException;
 import java.security.KeyPair;
 
-@Addon(id = "pv-addon-replaymod", scope = AddonLoaderScope.CLIENT, version = "2.1.0", authors = "Apehum")
+@Addon(id = "pv-addon-replaymod", scope = AddonLoaderScope.CLIENT, version = BuildConstants.VERSION, authors = "Apehum")
 public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer {
 
     public static final Logger LOGGER = LogManager.getLogger();
@@ -133,7 +135,7 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
         }
 
         ReplayModRecording.instance.getConnectionEventHandler().getPacketListener().save(
-                new ClientboundCustomPayloadPacket(
+                ServerPlayNetworking.createS2CPacket(
                         SELF_AUDIO_PACKET,
                         new FriendlyByteBuf(Unpooled.wrappedBuffer(out.toByteArray()))
                 )
@@ -156,13 +158,15 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
         buf.writeBytes(privateKey);
 
         ReplayModRecording.instance.getConnectionEventHandler().getPacketListener().save(
-                new ClientboundCustomPayloadPacket(KEYPAIR_PACKET, buf)
+                ServerPlayNetworking.createS2CPacket(KEYPAIR_PACKET, buf)
         );
     }
 
     @EventSubscribe
     public void onUdpClientConnect(@NotNull UdpClientConnectEvent event) {
         if (!ReplayInterface.INSTANCE.isInReplayEditor) return;
+
+        voiceClient.setTimeSupplier(new ReplayTimeSupplier());
 
         DummyUdpClient udpClient = new DummyUdpClient(voiceClient, event.getConnectionPacket().getSecret());
         voiceClient.getEventBus().register(this, udpClient);
@@ -172,21 +176,22 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
     }
 
     @EventSubscribe
+    public void onUdpClientDisconnect(@NotNull UdpClientClosedEvent event) {
+        if (!(voiceClient.getTimeSupplier() instanceof ReplayTimeSupplier)) return;
+        voiceClient.setTimeSupplier(new SystemTimeSupplier());
+    }
+
+    @EventSubscribe
     public void onAudioCaptureInitialize(@NotNull AudioCaptureInitializeEvent event) {
         cancelCaptureEvent(event);
     }
 
     @EventSubscribe
-    public void onSourceInitializedEvent(@NotNull AudioSourceInitializedEvent event) {
+    public void onSourceReset(@NotNull AudioSourceResetEvent event) {
         if (!ReplayInterface.INSTANCE.isInReplayEditor) return;
+        if (!event.getCause().equals(AudioSourceResetEvent.Cause.SOURCE_STOPPED)) return;
 
-        event.getSource().setCloseTimeoutMs(0L);
-
-        event.getSource().getSourceGroup().getSources().forEach((source) -> {
-            if (source instanceof AlSource) {
-                ((AlSource) source).setCloseTimeoutMs(0L);
-            }
-        });
+        event.setCancelled(true);
     }
 
     private boolean cancelCaptureEvent(@NotNull EventCancellable event) {
