@@ -3,7 +3,7 @@ name: Publish
 on:
   push:
     branches:
-      - release
+      - v1.1
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up JDK 17
+    - name: Set up JDK
       uses: actions/setup-java@v3
       with:
         distribution: temurin
@@ -29,24 +29,10 @@ jobs:
       with:
         arguments: build
 
-    - name: Publish to Modrinth
-      uses: Apehum/mc-publish@v1.1
-      with:
-        modrinth-id: 4iTfB0AP
-        modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-
-        files-primary: build/libs/!(*-@(dev|sources|javadoc)).jar
-        files-secondary: ""
-
-        changelog-file: changelog.md
-
     - name: Publish to GitHub
       uses: Apehum/mc-publish@v1.1
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        github-generate-changelog: false
-
-        files-primary: build/libs/!(*-@(dev|sources|javadoc)).jar
-        files-secondary: ""
-
+        github-generate-changelog: true
+        github-prerelease: true
         changelog-file: changelog.md
