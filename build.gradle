@@ -38,6 +38,14 @@ repositories {
         name = "plasmo-repo"
         url = "https://repo.plo.su"
     }
+    maven {
+        name = "plasmoverse-repo"
+        url = "https://repo.plasmoverse.com/releases"
+    }
+    maven {
+        name = "plasmoverse-snapshots-repo"
+        url = "https://repo.plasmoverse.com/snapshots"
+    }
 }
 
 runClient.doFirst {
