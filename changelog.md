@@ -1,0 +1,2 @@
+- Plasmo Voice 2.1.x support. This version supports only PV 2.1+, if you're using PV 2.0.x, use 1.0.x versions of the addon.
+- Pitch is now used to control the playback speed of the source.

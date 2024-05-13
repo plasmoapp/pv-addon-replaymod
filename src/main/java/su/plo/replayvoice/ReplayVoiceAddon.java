@@ -24,6 +24,7 @@ import su.plo.voice.api.addon.annotation.Addon;
 import su.plo.voice.api.client.PlasmoVoiceClient;
 import su.plo.voice.api.client.audio.source.ClientAudioSource;
 import su.plo.voice.api.client.event.audio.capture.AudioCaptureInitializeEvent;
+import su.plo.voice.api.client.event.audio.device.source.AlSourceWriteEvent;
 import su.plo.voice.api.client.event.audio.source.AudioSourceResetEvent;
 import su.plo.voice.api.client.event.connection.ConnectionKeyPairGenerateEvent;
 import su.plo.voice.api.client.event.connection.UdpClientPacketReceivedEvent;
@@ -115,6 +116,13 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
         } else if (event.getPacket() instanceof SelfAudioInfoPacket) {
             record(SELF_AUDIO_INFO_PACKET, event.getPacket());
         }
+    }
+
+    @EventSubscribe
+    public void onSourceWrite(@NotNull AlSourceWriteEvent event) {
+        event.getSource().getDevice().runInContextAsync(() -> {
+            event.getSource().setPitch((float) ReplayInterface.getCurrentSpeed());
+        });
     }
 
     @EventSubscribe
