@@ -1,0 +1,10 @@
+[versions]
+kotlin = "1.9.23"
+shadow = "8.1.1"
+
+plasmovoice = "2.0.3"
+lombok = "1.18.30"
+
+[libraries]
+plasmovoice = { module = "su.plo.voice.api:client", version.ref = "plasmovoice" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }

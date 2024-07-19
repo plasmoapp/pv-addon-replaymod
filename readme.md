@@ -27,5 +27,4 @@ Both Fabric and Forge are supported. The same add-on file works on both platform
 ## Credits
 
 - [Replay Voice Chat](https://github.com/henkelmax/replay-voice-chat)
-- [Sonic](https://github.com/waywardgeek/sonic)
 - [ReplayMod](https://github.com/ReplayMod/ReplayMod)

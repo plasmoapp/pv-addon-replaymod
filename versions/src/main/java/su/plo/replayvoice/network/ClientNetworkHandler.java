@@ -42,11 +42,13 @@ public class ClientNetworkHandler {
 
     private int currentPacketIndex = 0;
 
-    public void handleKeyPairPacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+    public void handleKeyPairPacket(byte[] data) {
+        ByteArrayDataInput buf = ByteStreams.newDataInput(data);
+
         byte[] publicKey = new byte[buf.readInt()];
-        buf.readBytes(publicKey);
+        buf.readFully(publicKey);
         byte[] privateKey = new byte[buf.readInt()];
-        buf.readBytes(privateKey);
+        buf.readFully(privateKey);
 
         voiceClient.getServerConnection().ifPresent((connection) -> {
             try {
@@ -65,12 +67,12 @@ public class ClientNetworkHandler {
         });
     }
 
-    public void handleSelfAudioPacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+    public void handleSelfAudioPacket(byte[] data) {
         if (ReplayInterface.INSTANCE.skipping) return;
 
         PlayerAudioPacket packet;
         try {
-            packet = getPacket(buf, PlayerAudioPacket.class);
+            packet = getPacket(data, PlayerAudioPacket.class);
         } catch (Exception ignored) {
             ignored.printStackTrace();
             return;
@@ -91,12 +93,12 @@ public class ClientNetworkHandler {
         currentPacketIndex = (currentPacketIndex + 1) % MAX_PACKETS;
     }
 
-    public void handleSelfAudioInfoPacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+    public void handleSelfAudioInfoPacket(byte[] data) {
         if (ReplayInterface.INSTANCE.skipping) return;
 
         SelfAudioInfoPacket packet;
         try {
-            packet = getPacket(buf, SelfAudioInfoPacket.class);
+            packet = getPacket(data, SelfAudioInfoPacket.class);
         } catch (Exception ignored) {
             return;
         }
@@ -115,17 +117,17 @@ public class ClientNetworkHandler {
                 source.closeAsync();
             } else if (!shouldPlay) return;
 
-            Optional<byte[]> data = packet.getData();
-            if (!data.isPresent()) {
+            Optional<byte[]> packetData = packet.getData();
+            if (!packetData.isPresent()) {
                 if (packet.getSequenceNumber() == 0) return;
 
                 int index = packetIndex.getOrDefault(packet.getSequenceNumber(), -1);
                 if (index == -1) return;
 
-                data = Optional.of(packets.get(index).getData());
+                packetData = Optional.of(packets.get(index).getData());
             }
 
-            data.ifPresent((bytes) -> source.process(new SourceAudioPacket(
+            packetData.ifPresent((bytes) -> source.process(new SourceAudioPacket(
                     packet.getSequenceNumber(),
                     source.getSourceInfo().getState(),
                     bytes,
@@ -135,12 +137,12 @@ public class ClientNetworkHandler {
         });
     }
 
-    public void handleSourceAudioPacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender sender) {
+    public void handleSourceAudioPacket(byte[] data) {
         if (ReplayInterface.INSTANCE.skipping) return;
 
         SourceAudioPacket packet;
         try {
-            packet = getPacket(buf, SourceAudioPacket.class);
+            packet = getPacket(data, SourceAudioPacket.class);
         } catch (Exception ignored) {
             return;
         }
@@ -152,10 +154,7 @@ public class ClientNetworkHandler {
                 });
     }
 
-    private <T extends Packet<?>> T getPacket(FriendlyByteBuf buf, Class<?> packetClass) throws Exception {
-        byte[] data = new byte[buf.readableBytes()];
-        buf.readBytes(data);
-
+    private <T extends Packet<?>> T getPacket(byte[] data, Class<?> packetClass) throws Exception {
         ByteArrayDataInput in = ByteStreams.newDataInput(data);
         T packet = (T) packetClass.getConstructor().newInstance();
         packet.read(in);

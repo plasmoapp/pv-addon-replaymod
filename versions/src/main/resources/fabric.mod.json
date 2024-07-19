@@ -27,8 +27,7 @@
     ],
     "depends": {
         "fabricloader": ">=${loader_version}",
-        "minecraft": "${minecraft_dependency}",
-        "java": ">=${java_version}",
+        "minecraft": ${minecraft_dependency},
         "replaymod": ">=${replaymod_dependency}",
         "plasmovoice": ">=${pv_dependency}"
     }

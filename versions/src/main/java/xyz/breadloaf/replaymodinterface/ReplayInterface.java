@@ -11,13 +11,14 @@ import com.replaymod.replaystudio.pathing.path.Keyframe;
 import com.replaymod.replaystudio.pathing.path.Path;
 import com.replaymod.replaystudio.pathing.path.Timeline;
 import com.replaymod.simplepathing.ReplayModSimplePathing;
+import io.netty.buffer.ByteBufUtil;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import su.plo.replayvoice.network.NetworkHelper;
 import xyz.breadloaf.replaymodinterface.mixin.accessor.ConnectionEventHandlerAccessor;
 import xyz.breadloaf.replaymodinterface.mixin.accessor.GuiPathingAccessor;
 
@@ -56,7 +57,7 @@ public class ReplayInterface implements ClientModInitializer {
 
     //Adds a fake packet into recording data
     public void sendFakePacket(ResourceLocation resourceLocation, FriendlyByteBuf packetData) {
-        sendFakePacket(ServerPlayNetworking.createS2CPacket(resourceLocation, packetData));
+        sendFakePacket(NetworkHelper.createS2CPacket(resourceLocation, ByteBufUtil.getBytes(packetData)));
     }
 
     public void sendFakePacket(Packet<?> packet) {

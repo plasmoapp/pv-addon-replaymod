@@ -4,10 +4,10 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.replaymod.recording.ReplayModRecording;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import su.plo.replayvoice.network.ClientNetworkHandler;
 import su.plo.replayvoice.network.DummyUdpClient;
+import su.plo.replayvoice.network.NetworkHelper;
 import su.plo.voice.api.addon.AddonInitializer;
 import su.plo.voice.api.addon.AddonLoaderScope;
 import su.plo.voice.api.addon.ClientAddonsLoader;
@@ -43,14 +44,18 @@ import xyz.breadloaf.replaymodinterface.ReplayInterface;
 import java.io.IOException;
 import java.security.KeyPair;
 
-@Addon(id = "pv-addon-replaymod", scope = AddonLoaderScope.CLIENT, version = "2.0.0", authors = "Apehum")
+//#if MC>=12100
+//$$ import su.plo.replayvoice.network.CodecManager;
+//#endif
+
+@Addon(id = "pv-addon-replaymod", scope = AddonLoaderScope.CLIENT, version = "2.0.1", authors = "Apehum")
 public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer {
 
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final ResourceLocation SELF_AUDIO_PACKET = new ResourceLocation("plasmo:voice/v2/self_audio");
-    public static final ResourceLocation SELF_AUDIO_INFO_PACKET = new ResourceLocation("plasmo:voice/v2/self_audio_info");
-    public static final ResourceLocation SOURCE_AUDIO_PACKET = new ResourceLocation("plasmo:voice/v2/source_audio");
-    public static final ResourceLocation KEYPAIR_PACKET = new ResourceLocation("plasmo:voice/v2/keypair");
+    public static final ResourceLocation SELF_AUDIO_PACKET = ResourceLocation.tryParse("plasmo:voice/v2/self_audio");
+    public static final ResourceLocation SELF_AUDIO_INFO_PACKET = ResourceLocation.tryParse("plasmo:voice/v2/self_audio_info");
+    public static final ResourceLocation SOURCE_AUDIO_PACKET = ResourceLocation.tryParse("plasmo:voice/v2/source_audio");
+    public static final ResourceLocation KEYPAIR_PACKET = ResourceLocation.tryParse("plasmo:voice/v2/keypair");
 
     private final Minecraft minecraft = Minecraft.getInstance();
 
@@ -61,10 +66,41 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
     public void onAddonInitialize() {
         ClientNetworkHandler network = new ClientNetworkHandler(voiceClient);
 
-        ClientPlayNetworking.registerGlobalReceiver(SOURCE_AUDIO_PACKET, network::handleSourceAudioPacket);
-        ClientPlayNetworking.registerGlobalReceiver(SELF_AUDIO_INFO_PACKET, network::handleSelfAudioInfoPacket);
-        ClientPlayNetworking.registerGlobalReceiver(SELF_AUDIO_PACKET, network::handleSelfAudioPacket);
-        ClientPlayNetworking.registerGlobalReceiver(KEYPAIR_PACKET, network::handleKeyPairPacket);
+        //#if MC>=12100
+        //$$ ClientPlayNetworking.registerGlobalReceiver(
+        //$$         CodecManager.getCodec(SOURCE_AUDIO_PACKET).getType(),
+        //$$         (payload, context) -> network.handleSourceAudioPacket(payload.data())
+        //$$ );
+        //$$ ClientPlayNetworking.registerGlobalReceiver(
+        //$$         CodecManager.getCodec(SELF_AUDIO_INFO_PACKET).getType(),
+        //$$         (payload, context) -> network.handleSelfAudioInfoPacket(payload.data())
+        //$$ );
+        //$$ ClientPlayNetworking.registerGlobalReceiver(
+        //$$         CodecManager.getCodec(SELF_AUDIO_PACKET).getType(),
+        //$$         (payload, context) -> network.handleSelfAudioPacket(payload.data())
+        //$$ );
+        //$$ ClientPlayNetworking.registerGlobalReceiver(
+        //$$         CodecManager.getCodec(KEYPAIR_PACKET).getType(),
+        //$$         (payload, context) -> network.handleKeyPairPacket(payload.data())
+        //$$ );
+        //#else
+        ClientPlayNetworking.registerGlobalReceiver(
+                SOURCE_AUDIO_PACKET,
+                (client, handler, buf, sender) -> network.handleSourceAudioPacket(ByteBufUtil.getBytes(buf))
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+                SELF_AUDIO_INFO_PACKET,
+                (client, handler, buf, sender) -> network.handleSelfAudioInfoPacket(ByteBufUtil.getBytes(buf))
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+                SELF_AUDIO_PACKET,
+                (client, handler, buf, sender) -> network.handleSelfAudioPacket(ByteBufUtil.getBytes(buf))
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+                KEYPAIR_PACKET,
+                (client, handler, buf, sender) -> network.handleKeyPairPacket(ByteBufUtil.getBytes(buf))
+        );
+        //#endif
     }
 
     @Override
@@ -132,12 +168,9 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
             return;
         }
 
-        ReplayModRecording.instance.getConnectionEventHandler().getPacketListener().save(
-                ServerPlayNetworking.createS2CPacket(
-                        SELF_AUDIO_PACKET,
-                        new FriendlyByteBuf(Unpooled.wrappedBuffer(out.toByteArray()))
-                )
-        );
+        ReplayModRecording.instance.getConnectionEventHandler()
+                .getPacketListener()
+                .save(NetworkHelper.createS2CPacket(SELF_AUDIO_PACKET, out.toByteArray()));
     }
 
     @EventSubscribe
@@ -156,7 +189,7 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
         buf.writeBytes(privateKey);
 
         ReplayModRecording.instance.getConnectionEventHandler().getPacketListener().save(
-                ServerPlayNetworking.createS2CPacket(KEYPAIR_PACKET, buf)
+                NetworkHelper.createS2CPacket(KEYPAIR_PACKET, ByteBufUtil.getBytes(buf))
         );
     }
 
