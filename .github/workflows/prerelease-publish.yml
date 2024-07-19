@@ -23,6 +23,7 @@ jobs:
           8
           16
           17
+          21
 
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2
@@ -35,4 +36,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         github-generate-changelog: true
         github-prerelease: true
+
         changelog-file: changelog.md
+        files-primary: build/libs/!(*-@(dev|sources|javadoc)).jar
+        files-secondary: ""

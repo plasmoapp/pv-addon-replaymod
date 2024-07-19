@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up JDK 17
+    - name: Set up JDK
       uses: actions/setup-java@v3
       with:
         distribution: temurin
@@ -23,6 +23,7 @@ jobs:
           8
           16
           17
+          21
 
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2
@@ -32,13 +33,16 @@ jobs:
     - name: Publish to Modrinth
       uses: Apehum/mc-publish@v1.1
       with:
+        name: 'pv-addon-replaymod'
+        split-releases: true
+        files-primary: build/libs/*.jar
+        version-resolver: 'exact'
+
+        changelog-file: client/changelog.md
+
+        modrinth-unfeature-mode: 'subset'
         modrinth-id: 4iTfB0AP
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-
-        files-primary: build/libs/!(*-@(dev|sources|javadoc)).jar
-        files-secondary: ""
-
-        changelog-file: changelog.md
 
     - name: Publish to GitHub
       uses: Apehum/mc-publish@v1.1

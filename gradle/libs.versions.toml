@@ -1,0 +1,16 @@
+[versions]
+kotlin = "1.9.23"
+shadow = "8.1.1"
+
+plasmovoice = "2.1.0-SNAPSHOT"
+pv-gradle-plugin = "1.0.2-SNAPSHOT"
+lombok = "1.18.30"
+idea-ext = "1.1.8"
+
+[libraries]
+plasmovoice = { module = "su.plo.voice.api:client", version.ref = "plasmovoice" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+
+[plugins]
+pv-java-templates = { id = "su.plo.voice.plugin.java-templates", version.ref = "pv-gradle-plugin" }
+idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "idea-ext" }
