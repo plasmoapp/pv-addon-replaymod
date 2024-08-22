@@ -12,6 +12,7 @@ pluginManagement {
         maven("https://maven.architectury.dev/")
         maven("https://maven.minecraftforge.net")
         maven("https://repo.plasmoverse.com/snapshots")
+        maven("https://repo.plasmoverse.com/releases")
     }
 
     plugins {
