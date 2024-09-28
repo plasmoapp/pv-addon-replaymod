@@ -39,7 +39,7 @@ jobs:
         files-primary: build/libs/*.jar
         version-resolver: 'exact'
 
-        changelog-file: client/changelog.md
+        changelog-file: changelog.md
 
         modrinth-unfeature-mode: 'subset'
         modrinth-id: 4iTfB0AP
