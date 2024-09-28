@@ -1,9 +1,9 @@
-name: Publish
+name: Publish Alpha
 
 on:
   push:
     branches:
-      - v1.1
+      - alpha
 
 jobs:
   build:
@@ -23,6 +23,7 @@ jobs:
           8
           16
           17
+          21
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
@@ -30,10 +31,28 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
 
+    - name: Publish to Modrinth/CurseForge
+      uses: Apehum/mc-publish@v1.1
+      with:
+        name: 'pv-addon-replaymod'
+        split-releases: true
+        files-primary: build/libs/*.jar
+        version-resolver: 'exact'
+
+        changelog-file: client/changelog.md
+
+        modrinth-unfeature-mode: 'subset'
+        modrinth-id: 4iTfB0AP
+        modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+        version-type: alpha
+
     - name: Publish to GitHub
       uses: Apehum/mc-publish@v1.1
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        github-generate-changelog: true
-        github-prerelease: true
+        github-generate-changelog: false
+
+        files-secondary: ""
+
         changelog-file: changelog.md

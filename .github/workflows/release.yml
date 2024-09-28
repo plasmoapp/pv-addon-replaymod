@@ -1,4 +1,4 @@
-name: Publish
+name: Publish Release
 
 on:
   push:
@@ -14,9 +14,9 @@ jobs:
       packages: write
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         distribution: temurin
         java-version: |
@@ -25,12 +25,13 @@ jobs:
           17
           21
 
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: build
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
 
-    - name: Publish to Modrinth
+    - name: Build with Gradle
+      run: ./gradlew build
+
+    - name: Publish to Modrinth/CurseForge
       uses: Apehum/mc-publish@v1.1
       with:
         name: 'pv-addon-replaymod'
@@ -50,7 +51,6 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         github-generate-changelog: false
 
-        files-primary: build/libs/!(*-@(dev|sources|javadoc)).jar
         files-secondary: ""
 
         changelog-file: changelog.md
