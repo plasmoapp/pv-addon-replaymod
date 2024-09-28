@@ -18,8 +18,6 @@ A fork of [Replay Voice Chat](https://github.com/henkelmax/replay-voice-chat) th
 
 ## Installation 
 
-Both Fabric and Forge are supported. The same add-on file works on both platforms.
-
 1. Install [Plasmo Voice](https://modrinth.com/plugin/plasmo-voice) and [ReplayMod](https://www.replaymod.com/)
 1. Download the add-on from [Modrinth](https://modrinth.com/mod/pv-addon-replaymod/)
 1. Drop it into the `~/mods` folder
