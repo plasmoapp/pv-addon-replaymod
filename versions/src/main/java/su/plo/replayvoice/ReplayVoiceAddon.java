@@ -24,6 +24,7 @@ import su.plo.voice.api.addon.InjectPlasmoVoice;
 import su.plo.voice.api.addon.annotation.Addon;
 import su.plo.voice.api.client.PlasmoVoiceClient;
 import su.plo.voice.api.client.audio.source.ClientAudioSource;
+import su.plo.voice.api.client.event.audio.capture.AudioCaptureEvent;
 import su.plo.voice.api.client.event.audio.capture.AudioCaptureInitializeEvent;
 import su.plo.voice.api.client.event.audio.device.source.AlSourceWriteEvent;
 import su.plo.voice.api.client.event.audio.source.AudioSourceResetEvent;
@@ -120,6 +121,12 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
         if (!CameraUtil.isReplayRecorder()) {
             event.setCancelled(true);
         }
+    }
+
+    @EventSubscribe
+    public void onAudioCapture(@NotNull AudioCaptureEvent event) {
+        if (!ReplayInterface.INSTANCE.isInReplayEditor) return;
+        event.setCancelled(true);
     }
 
     @EventSubscribe
