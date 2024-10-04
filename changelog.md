@@ -1,2 +1,2 @@
-- Update to Plasmo Voice 2.1.0. This version is not compatible with PV 2.0.x.
-- Pitch is now used to control the playback speed of the source.
+- Voice audio render to AAC format using OpenAL loopback device.
+  Rendered audio is saved in the same location and the same name (but with .aac extension) as the video.
