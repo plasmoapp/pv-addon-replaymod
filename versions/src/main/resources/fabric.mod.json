@@ -23,7 +23,8 @@
         ]
     },
     "mixins": [
-        "replaymodinterface.mixins.json"
+        "replaymodinterface.mixins.json",
+        "replayvoice.mixins.json"
     ],
     "depends": {
         "fabricloader": ">=${loader_version}",

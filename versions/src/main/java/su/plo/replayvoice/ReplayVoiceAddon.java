@@ -54,6 +54,7 @@ import java.security.KeyPair;
 @Addon(id = "pv-addon-replaymod", scope = AddonLoaderScope.CLIENT, version = BuildConstants.VERSION, authors = "Apehum")
 public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer {
 
+    public static ReplayVoiceAddon INSTANCE = new ReplayVoiceAddon();
     public static final Logger LOGGER = LogManager.getLogger();
     public static final ResourceLocation SELF_AUDIO_PACKET = ResourceLocation.tryParse("plasmo:voice/v2/self_audio");
     public static final ResourceLocation SELF_AUDIO_INFO_PACKET = ResourceLocation.tryParse("plasmo:voice/v2/self_audio_info");
@@ -63,7 +64,7 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
     private final Minecraft minecraft = Minecraft.getInstance();
 
     @InjectPlasmoVoice
-    private PlasmoVoiceClient voiceClient;
+    public PlasmoVoiceClient voiceClient;
 
     @Override
     public void onAddonInitialize() {
@@ -108,6 +109,7 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
 
     @Override
     public void onInitializeClient() {
+        INSTANCE = this;
         ClientAddonsLoader.INSTANCE.load(this);
     }
 
