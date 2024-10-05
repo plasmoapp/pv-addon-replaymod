@@ -9,7 +9,7 @@ plugins {
 base.archivesName.set("${rootProject.name}-${platform.mcVersionStr}")
 
 val minecraftSupportedVersions = mapOf(
-    11605 to "[\">=1.16.5\", \"<=1.20.4\"]",
+    11605 to "\">=1.16.5 <=1.20.4\"",
     12100 to "\">=1.21\""
 )
 
