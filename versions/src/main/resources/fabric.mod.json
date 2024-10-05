@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "id": "pv-addon-replaymod",
     "version": "${version}",
-    "name": "Replay Voice Chat",
+    "name": "pv-addon-replaymod",
     "description": "A compatibility mod between Plasmo Voice and ReplayMod",
     "authors": [
         "Max Henkel",
