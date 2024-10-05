@@ -37,7 +37,6 @@ jobs:
         name: 'pv-addon-replaymod'
         split-releases: true
         files-primary: build/libs/*.jar
-        version-resolver: 'exact'
 
         changelog-file: changelog.md
 
