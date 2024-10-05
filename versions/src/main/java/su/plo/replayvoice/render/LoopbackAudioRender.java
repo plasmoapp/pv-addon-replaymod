@@ -45,6 +45,8 @@ public class LoopbackAudioRender implements AutoCloseable {
 
     @Override
     public synchronized void close() throws Exception {
+        if (!initialized) return;
+
         writer.close();
     }
 
