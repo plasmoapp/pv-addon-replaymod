@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "su.plo.replayvoice.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinAlOutputDevice",
+    "MixinProcessTask"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

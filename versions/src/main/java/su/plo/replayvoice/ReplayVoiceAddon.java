@@ -24,6 +24,7 @@ import su.plo.voice.api.addon.InjectPlasmoVoice;
 import su.plo.voice.api.addon.annotation.Addon;
 import su.plo.voice.api.client.PlasmoVoiceClient;
 import su.plo.voice.api.client.audio.source.ClientAudioSource;
+import su.plo.voice.api.client.event.audio.capture.AudioCaptureEvent;
 import su.plo.voice.api.client.event.audio.capture.AudioCaptureInitializeEvent;
 import su.plo.voice.api.client.event.audio.device.source.AlSourceWriteEvent;
 import su.plo.voice.api.client.event.audio.source.AudioSourceResetEvent;
@@ -54,6 +55,7 @@ import java.security.KeyPair;
 @Addon(id = "pv-addon-replaymod", scope = AddonLoaderScope.CLIENT, version = BuildConstants.VERSION, authors = "Apehum")
 public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer {
 
+    public static ReplayVoiceAddon INSTANCE = new ReplayVoiceAddon();
     public static final Logger LOGGER = LogManager.getLogger();
     public static final ResourceLocation SELF_AUDIO_PACKET = ResourceLocation.tryParse("plasmo:voice/v2/self_audio");
     public static final ResourceLocation SELF_AUDIO_INFO_PACKET = ResourceLocation.tryParse("plasmo:voice/v2/self_audio_info");
@@ -63,7 +65,7 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
     private final Minecraft minecraft = Minecraft.getInstance();
 
     @InjectPlasmoVoice
-    private PlasmoVoiceClient voiceClient;
+    public PlasmoVoiceClient voiceClient;
 
     @Override
     public void onAddonInitialize() {
@@ -108,6 +110,7 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
 
     @Override
     public void onInitializeClient() {
+        INSTANCE = this;
         ClientAddonsLoader.INSTANCE.load(this);
     }
 
@@ -118,6 +121,12 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
         if (!CameraUtil.isReplayRecorder()) {
             event.setCancelled(true);
         }
+    }
+
+    @EventSubscribe
+    public void onAudioCapture(@NotNull AudioCaptureEvent event) {
+        if (!ReplayInterface.INSTANCE.isInReplayEditor) return;
+        event.setCancelled(true);
     }
 
     @EventSubscribe

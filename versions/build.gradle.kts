@@ -9,7 +9,7 @@ plugins {
 base.archivesName.set("${rootProject.name}-${platform.mcVersionStr}")
 
 val minecraftSupportedVersions = mapOf(
-    11605 to "[\">=1.16.5\", \"<=1.20.4\"]",
+    11605 to "\">=1.16.5 <=1.20.4\"",
     12100 to "\">=1.21\""
 )
 
@@ -39,7 +39,7 @@ dependencies {
 
     annotationProcessor(libs.lombok)
 
-//    modImplementation("maven.modrinth:plasmo-voice:fabric-${platform.mcVersionStr}-2.0.10")
+    modImplementation("maven.modrinth:plasmo-voice:fabric-${platform.mcVersionStr}-2.1.0")
 
     if (platform.mcVersion >= 12100) {
         modImplementation("maven.modrinth:replaymod:${platform.mcVersionStr}-2.6.17")
