@@ -44,7 +44,7 @@ dependencies {
     if (platform.mcVersion >= 12100) {
         modImplementation("maven.modrinth:replaymod:${platform.mcVersionStr}-2.6.17")
     } else if (platform.mcVersion == 11605) {
-        modImplementation("maven.modrinth:replaymod:1.16.4-2.6.15")
+        modImplementation("maven.modrinth:replaymod:1.16.4-2.6.19")
     }
 }
 

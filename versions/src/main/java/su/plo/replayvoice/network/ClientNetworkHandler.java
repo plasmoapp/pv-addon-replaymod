@@ -12,7 +12,6 @@ import su.plo.voice.proto.packets.Packet;
 import su.plo.voice.proto.packets.udp.clientbound.SelfAudioInfoPacket;
 import su.plo.voice.proto.packets.udp.clientbound.SourceAudioPacket;
 import su.plo.voice.proto.packets.udp.serverbound.PlayerAudioPacket;
-import xyz.breadloaf.replaymodinterface.ReplayInterface;
 
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -62,8 +61,6 @@ public class ClientNetworkHandler {
     }
 
     public void handleSelfAudioPacket(byte[] data) {
-        if (ReplayInterface.INSTANCE.skipping) return;
-
         PlayerAudioPacket packet;
         try {
             packet = getPacket(data, PlayerAudioPacket.class);
@@ -88,8 +85,6 @@ public class ClientNetworkHandler {
     }
 
     public void handleSelfAudioInfoPacket(byte[] data) {
-        if (ReplayInterface.INSTANCE.skipping) return;
-
         SelfAudioInfoPacket packet;
         try {
             packet = getPacket(data, SelfAudioInfoPacket.class);
@@ -132,8 +127,6 @@ public class ClientNetworkHandler {
     }
 
     public void handleSourceAudioPacket(byte[] data) {
-        if (ReplayInterface.INSTANCE.skipping) return;
-
         SourceAudioPacket packet;
         try {
             packet = getPacket(data, SourceAudioPacket.class);
