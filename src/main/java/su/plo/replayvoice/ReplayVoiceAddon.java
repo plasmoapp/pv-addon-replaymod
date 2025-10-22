@@ -132,7 +132,7 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
         if (!ReplayInterface.INSTANCE.isInReplayEditor || event.isRender()) return;
 
         if (!CameraUtil.isReplayRecorder()) return;
-        RemotePlayer player = (RemotePlayer) Minecraft.getInstance().cameraEntity;
+        RemotePlayer player = (RemotePlayer) Minecraft.getInstance().getCameraEntity();
 
         boolean isActivated = voiceClient.getSourceManager().getAllSelfSourceInfos()
                 .stream()

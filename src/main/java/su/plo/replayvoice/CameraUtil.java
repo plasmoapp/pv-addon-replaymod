@@ -7,7 +7,7 @@ import net.minecraft.world.entity.Entity;
 public final class CameraUtil {
 
     public static boolean isReplayRecorder() {
-        Entity camera = Minecraft.getInstance().cameraEntity;
+        Entity camera = Minecraft.getInstance().getCameraEntity();
         return camera instanceof RemotePlayer;
     }
 
