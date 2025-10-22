@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.support.listFilesOrdered
-
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -9,35 +7,22 @@ pluginManagement {
 
         maven("https://jitpack.io/")
         maven("https://maven.fabricmc.net")
-        maven("https://maven.architectury.dev/")
         maven("https://maven.minecraftforge.net")
-        maven("https://repo.plasmoverse.com/snapshots")
         maven("https://repo.plasmoverse.com/releases")
     }
+}
 
-    plugins {
-        val egtVersion = "0.7.0-SNAPSHOT"
-        id("gg.essential.defaults") version egtVersion
-        id("gg.essential.multi-version.root") version egtVersion
+plugins {
+    id("dev.kikugie.stonecutter") version "0.7.10"
+}
+
+stonecutter {
+    centralScript = "build.gradle.kts"
+
+    create(rootProject) {
+        versions("1.16.5", "1.21.1")
+        vcsVersion = "1.16.5"
     }
 }
 
 rootProject.name = "pv-addon-replaymod"
-
-include("versions")
-project(":versions").apply {
-    projectDir = file("versions/")
-    buildFileName = "root.gradle.kts"
-}
-
-file("versions").listFilesOrdered {
-    return@listFilesOrdered it.isDirectory && it.name.contains("-")
-}.forEach {
-    include("versions:${it.name}")
-    project(":versions:${it.name}").apply {
-        projectDir = file("versions/${it.name}")
-        buildFileName = "../build.gradle.kts"
-    }
-}
-
-include("common")

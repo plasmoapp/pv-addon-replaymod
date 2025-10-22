@@ -1,16 +1,17 @@
 [versions]
-kotlin = "1.9.23"
-shadow = "8.1.1"
+kotlin = "2.0.21"
 
-plasmovoice = "2.1.0-SNAPSHOT"
-pv-gradle-plugin = "1.0.2-SNAPSHOT"
+plasmovoice = "2.1.6"
 lombok = "1.18.30"
-idea-ext = "1.1.8"
+fabric-loader = "0.17.3"
+fabric-loom = "1.11-SNAPSHOT"
+buildconfig = "5.7.0"
 
 [libraries]
 plasmovoice = { module = "su.plo.voice.api:client", version.ref = "plasmovoice" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+fabricloader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
 
 [plugins]
-pv-java-templates = { id = "su.plo.voice.plugin.java-templates", version.ref = "pv-gradle-plugin" }
-idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "idea-ext" }
+loom = { id = "fabric-loom", version.ref = "fabric-loom" }
+buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }

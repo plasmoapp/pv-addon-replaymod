@@ -1,6 +1,7 @@
 package su.plo.replayvoice.network;
 
-import lombok.experimental.UtilityClass;
+//? if >=1.21 {
+/*import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -24,3 +25,4 @@ public final class CodecManager {
         });
     }
 }
+*///?}

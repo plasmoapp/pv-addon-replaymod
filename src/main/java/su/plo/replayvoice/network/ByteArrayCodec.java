@@ -1,6 +1,7 @@
 package su.plo.replayvoice.network;
 
-import lombok.Getter;
+//? if >=1.21 {
+/*import lombok.Getter;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -31,3 +32,4 @@ public class ByteArrayCodec implements StreamCodec<RegistryFriendlyByteBuf, Byte
         buf.writeBytes(payload.data());
     }
 }
+*///?}

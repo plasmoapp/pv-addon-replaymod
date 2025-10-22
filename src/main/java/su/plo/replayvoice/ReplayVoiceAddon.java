@@ -42,17 +42,15 @@ import su.plo.voice.proto.packets.Packet;
 import su.plo.voice.proto.packets.udp.clientbound.SelfAudioInfoPacket;
 import su.plo.voice.proto.packets.udp.clientbound.SourceAudioPacket;
 import su.plo.voice.proto.packets.udp.serverbound.PlayerAudioPacket;
-import su.plo.voice.replayvoice.BuildConstants;
 import xyz.breadloaf.replaymodinterface.ReplayInterface;
 
 import java.io.IOException;
 import java.security.KeyPair;
 
-//#if MC>=12100
-//$$ import su.plo.replayvoice.network.CodecManager;
-//#endif
+//? if >=1.21
+/*import su.plo.replayvoice.network.CodecManager;*/
 
-@Addon(id = "pv-addon-replaymod", scope = AddonLoaderScope.CLIENT, version = BuildConstants.VERSION, authors = "Apehum")
+@Addon(id = "pv-addon-replaymod", scope = AddonLoaderScope.CLIENT, version = BuildConfig.VERSION, authors = "Apehum")
 public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer {
 
     public static ReplayVoiceAddon INSTANCE = new ReplayVoiceAddon();
@@ -71,24 +69,24 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
     public void onAddonInitialize() {
         ClientNetworkHandler network = new ClientNetworkHandler(voiceClient);
 
-        //#if MC>=12100
-        //$$ ClientPlayNetworking.registerGlobalReceiver(
-        //$$         CodecManager.getCodec(SOURCE_AUDIO_PACKET).getType(),
-        //$$         (payload, context) -> network.handleSourceAudioPacket(payload.data())
-        //$$ );
-        //$$ ClientPlayNetworking.registerGlobalReceiver(
-        //$$         CodecManager.getCodec(SELF_AUDIO_INFO_PACKET).getType(),
-        //$$         (payload, context) -> network.handleSelfAudioInfoPacket(payload.data())
-        //$$ );
-        //$$ ClientPlayNetworking.registerGlobalReceiver(
-        //$$         CodecManager.getCodec(SELF_AUDIO_PACKET).getType(),
-        //$$         (payload, context) -> network.handleSelfAudioPacket(payload.data())
-        //$$ );
-        //$$ ClientPlayNetworking.registerGlobalReceiver(
-        //$$         CodecManager.getCodec(KEYPAIR_PACKET).getType(),
-        //$$         (payload, context) -> network.handleKeyPairPacket(payload.data())
-        //$$ );
-        //#else
+        //? if >=1.21 {
+        /*ClientPlayNetworking.registerGlobalReceiver(
+                CodecManager.getCodec(SOURCE_AUDIO_PACKET).getType(),
+                (payload, context) -> network.handleSourceAudioPacket(payload.data())
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+                CodecManager.getCodec(SELF_AUDIO_INFO_PACKET).getType(),
+                (payload, context) -> network.handleSelfAudioInfoPacket(payload.data())
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+                CodecManager.getCodec(SELF_AUDIO_PACKET).getType(),
+                (payload, context) -> network.handleSelfAudioPacket(payload.data())
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+                CodecManager.getCodec(KEYPAIR_PACKET).getType(),
+                (payload, context) -> network.handleKeyPairPacket(payload.data())
+        );
+        *///?} else {
         ClientPlayNetworking.registerGlobalReceiver(
                 SOURCE_AUDIO_PACKET,
                 (client, handler, buf, sender) -> network.handleSourceAudioPacket(ByteBufUtil.getBytes(buf))
@@ -105,7 +103,7 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
                 KEYPAIR_PACKET,
                 (client, handler, buf, sender) -> network.handleKeyPairPacket(ByteBufUtil.getBytes(buf))
         );
-        //#endif
+        //?}
     }
 
     @Override

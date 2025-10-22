@@ -20,11 +20,11 @@ public class MixinFullReplaySender {
         if (!(p instanceof ClientboundCustomPayloadPacket)) return;
 
         ClientboundCustomPayloadPacket packet = (ClientboundCustomPayloadPacket) p;
-        //#if MC>=12100
-        //$$ ResourceLocation packetId = packet.payload().type().id();
-        //#else
+        //? if >=1.21 {
+        /*ResourceLocation packetId = packet.payload().type().id();
+        *///?} else {
         ResourceLocation packetId = packet.getIdentifier();
-        //#endif
+        //?}
 
         if (!packetId.equals(ReplayVoiceAddon.SELF_AUDIO_PACKET) &&
                 !packetId.equals(ReplayVoiceAddon.SELF_AUDIO_INFO_PACKET) &&
