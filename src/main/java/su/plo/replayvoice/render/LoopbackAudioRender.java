@@ -24,6 +24,12 @@ public class LoopbackAudioRender implements AutoCloseable {
 
     private boolean initialized = false;
 
+    public synchronized void initialize() {
+        if (initialized) return;
+
+        initializeWriter();
+    }
+
     public synchronized void render() {
         if (!initialized) {
             initializeWriter();

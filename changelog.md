@@ -1,1 +1,0 @@
-- Fixed audio playback issues when skipping on the timeline.
