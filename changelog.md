@@ -1,0 +1,1 @@
+- Fixed audio sometimes doesn't render resulting in silent audio file export.
