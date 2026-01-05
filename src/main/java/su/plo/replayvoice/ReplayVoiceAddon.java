@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import su.plo.replayvoice.network.ClientNetworkHandler;
 import su.plo.replayvoice.network.DummyUdpClient;
 import su.plo.replayvoice.network.NetworkHelper;
+import su.plo.replayvoice.render.VoiceAudioRender;
 import su.plo.voice.api.addon.AddonInitializer;
 import su.plo.voice.api.addon.AddonLoaderScope;
 import su.plo.voice.api.addon.ClientAddonsLoader;
@@ -29,6 +30,7 @@ import su.plo.voice.api.client.event.audio.capture.AudioCaptureInitializeEvent;
 import su.plo.voice.api.client.event.audio.device.source.AlSourceWriteEvent;
 import su.plo.voice.api.client.event.audio.source.AudioSourceResetEvent;
 import su.plo.voice.api.client.event.connection.ConnectionKeyPairGenerateEvent;
+import su.plo.voice.api.client.event.connection.ServerInfoInitializedEvent;
 import su.plo.voice.api.client.event.connection.UdpClientPacketReceivedEvent;
 import su.plo.voice.api.client.event.connection.UdpClientPacketSendEvent;
 import su.plo.voice.api.client.event.render.HudActivationRenderEvent;
@@ -221,6 +223,12 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
 
         voiceClient.getUdpClientManager().setClient(udpClient);
         event.setCancelled(true);
+    }
+
+    @EventSubscribe
+    public void onUdpClientConnected(@NotNull ServerInfoInitializedEvent event) {
+        if (!VoiceAudioRender.isRendering()) return;
+        VoiceAudioRender.AUDIO_RENDER.initialize();
     }
 
     @EventSubscribe

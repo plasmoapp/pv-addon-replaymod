@@ -1,1 +1,1 @@
-- Fixed audio playback issues when skipping on the timeline.
+- Fixed audio sometimes doesn't render resulting in silent audio file export.
