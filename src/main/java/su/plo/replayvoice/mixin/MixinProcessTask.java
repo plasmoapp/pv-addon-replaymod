@@ -11,6 +11,6 @@ public final class MixinProcessTask {
 
     @Inject(method = "run", at = @At(value = "INVOKE", target = "Lcom/replaymod/render/rendering/FrameConsumer;consume(Ljava/util/Map;)V", shift = At.Shift.BEFORE))
     public void run(CallbackInfo ci) {
-        VoiceAudioRender.AUDIO_RENDER.render();
+        VoiceAudioRender.render();
     }
 }

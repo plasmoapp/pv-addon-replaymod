@@ -1,1 +1,1 @@
-- Fixed audio sometimes doesn't render resulting in silent audio file export.
+- Fixed crash when trying to render a screenshot in replay.
