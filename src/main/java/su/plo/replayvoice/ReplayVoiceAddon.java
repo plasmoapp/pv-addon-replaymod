@@ -228,7 +228,7 @@ public class ReplayVoiceAddon implements ClientModInitializer, AddonInitializer 
     @EventSubscribe
     public void onUdpClientConnected(@NotNull ServerInfoInitializedEvent event) {
         if (!VoiceAudioRender.isRendering()) return;
-        VoiceAudioRender.AUDIO_RENDER.initialize();
+        VoiceAudioRender.initialize();
     }
 
     @EventSubscribe

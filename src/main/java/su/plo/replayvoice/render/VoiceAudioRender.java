@@ -8,10 +8,20 @@ import su.plo.voice.api.client.audio.device.DeviceManager;
 
 public final class VoiceAudioRender {
 
-    public static LoopbackAudioRender AUDIO_RENDER;
+    private static LoopbackAudioRender AUDIO_RENDER;
 
     public static boolean isRendering() {
         return AUDIO_RENDER != null;
+    }
+
+    public static void render() {
+        if (AUDIO_RENDER == null) return;
+        AUDIO_RENDER.render();
+    }
+
+    public static void initialize() {
+        if (AUDIO_RENDER == null) return;
+        AUDIO_RENDER.initialize();
     }
 
     public static void startRender(@NotNull VideoRenderer renderer) {
