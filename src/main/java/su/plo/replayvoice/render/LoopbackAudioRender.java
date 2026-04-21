@@ -60,8 +60,6 @@ public class LoopbackAudioRender implements AutoCloseable {
         ServerInfo serverInfo = voiceClient.getServerInfo().orElse(null);
         if (serverInfo == null) return;
 
-        VoiceAudioRender.reloadDevice();
-
         File outputVideoFile = videoRenderer.getRenderSettings().getOutputFile();
         File outputFolder = outputVideoFile.getParentFile();
         String[] outputFileNameSplit = outputVideoFile.getName().split("\\.");

@@ -1,1 +1,1 @@
-- Fixed crash when trying to render a screenshot in replay.
+- Fixed export producing silence after reconnecting to a server mid-replay.

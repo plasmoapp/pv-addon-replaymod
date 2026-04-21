@@ -35,6 +35,9 @@ public class DummyUdpClient implements UdpClient {
 
     @Override
     public void close(UdpClientClosedEvent.@NotNull Reason reason) {
+        if (!connected) return;
+        connected = false;
+        voiceClient.getEventBus().fire(new UdpClientClosedEvent(this, reason));
     }
 
     @Override
