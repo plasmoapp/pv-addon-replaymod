@@ -1,22 +1,53 @@
+import net.fabricmc.loom.LoomGradlePlugin
+import net.fabricmc.loom.LoomNoRemapGradlePlugin
+import net.fabricmc.loom.api.LoomGradleExtensionAPI
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     kotlin("jvm") version libs.versions.kotlin
-    alias(libs.plugins.loom)
+    alias(libs.plugins.loom) apply false
     alias(libs.plugins.buildconfig)
 }
 
 stonecutter {
-    replacements.string {
-        direction = eval(current.version, ">=1.21")
-        replace(
-            "net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket",
-            "net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket",
-        )
+    fun fromFile(direction: Boolean, path: String) {
+        file(rootProject.layout.projectDirectory.dir("versions").file(path))
+            .readText()
+            .lines()
+            .filter { it.isNotBlank() }
+            .map { it.trim() }
+            .filter { !it.startsWith("#") }
+            .map { it.substringBefore(" ") to it.substringAfter(" ") }
+            .forEach { (replaceFrom, replaceTo) ->
+                replacements.string {
+                    this.direction = direction
+                    replace(replaceFrom, replaceTo)
+                }
+            }
     }
+
+    fromFile(eval(current.version, ">=1.21"), "1.16.5-1.21.txt")
+    fromFile(eval(current.version, ">=26.1"), "1.21-26.1.txt")
 }
 
 val minecraftVersion = stonecutter.current.version.substringBefore('-')
 
 base.archivesName.set("${rootProject.name}-${minecraftVersion}")
+
+val noMappings = stonecutter.eval(minecraftVersion, ">=26.1")
+
+if (noMappings) {
+    apply<LoomNoRemapGradlePlugin>()
+
+    configurations.api.get().extendsFrom(configurations.create("modApi"))
+    configurations.implementation.get().extendsFrom(configurations.create("modImplementation"))
+    configurations.compileOnly.get().extendsFrom(configurations.create("modCompileOnly"))
+    configurations.runtimeOnly.get().extendsFrom(configurations.create("modRuntimeOnly"))
+} else {
+    apply<LoomGradlePlugin>()
+}
+
+val loom = the<LoomGradleExtensionAPI>()
 
 repositories {
     maven {
@@ -31,18 +62,20 @@ repositories {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:$minecraftVersion")
-    mappings(loom.officialMojangMappings())
+    "minecraft"("com.mojang:minecraft:$minecraftVersion")
+    if (!noMappings) {
+        "mappings"(loom.officialMojangMappings())
+    }
 
     annotationProcessor(libs.lombok)
 
     implementation(libs.plasmovoice)
 
-    modImplementation(libs.fabricloader)
+    "modImplementation"(libs.fabricloader)
 
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
-    modImplementation("maven.modrinth:plasmo-voice:${property("deps.plasmo_voice")}")
-    modImplementation("maven.modrinth:replaymod:${property("deps.replaymod")}")
+    "modImplementation"("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+    "modImplementation"("maven.modrinth:plasmo-voice:${property("deps.plasmo_voice")}")
+    "modImplementation"("maven.modrinth:replaymod:${property("deps.replaymod")}")
 }
 
 buildConfig {
@@ -79,7 +112,9 @@ tasks {
 
     val copyToRoot =
         register<Copy>("copyToRoot") {
-            from(remapJar.get().archiveFile)
+            val outputJar = if (!noMappings) named<RemapJarTask>("remapJar") else jar
+
+            from(outputJar.get().archiveFile)
             into(rootProject.layout.buildDirectory.dir("libs"))
         }
 

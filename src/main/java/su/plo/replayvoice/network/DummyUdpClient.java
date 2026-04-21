@@ -61,6 +61,11 @@ public class DummyUdpClient implements UdpClient {
         return false;
     }
 
+    @Override
+    public long getKeepAlive() {
+        return voiceClient.getTimeSupplier().getCurrentTimeMillis();
+    }
+
     @EventSubscribe
     public void onServerInfoUpdate(@NotNull ServerInfoInitializedEvent event) {
         if (connected) return;

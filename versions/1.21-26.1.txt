@@ -1,0 +1,6 @@
+ResourceLocation Identifier
+
+playC2S serverboundPlay
+playS2C clientboundPlay
+
+createS2CPacket createClientboundPacket
